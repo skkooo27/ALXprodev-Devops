@@ -1,0 +1,10 @@
+#!/bin/bash
+
+NAME=$(jq -r '.name' data.json | sed 's/\b\(.\)/\u\1/')
+HEIGHT=$(jq -r '.height' data.json)
+WEIGHT=$(jq -r '.weight' data.json)
+TYPE=$(jq -r '.types[].type.name' data.json | sed -e 's/\b\(.\)/\u\1/' | paste -sd "/" -)
+HEIGHT_M=$(awk "BEGIN {printf \"%.1f\", $HEIGHT/10}")
+WEIGHT_KG=$(awk "BEGIN {printf \"%d\", $WEIGHT/10}")
+
+echo "$NAME is of type $TYPE, weighs ${WEIGHT_KG}kg, and is ${HEIGHT_M}m tall."
