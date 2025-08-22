@@ -1,0 +1,39 @@
+#!/bin/bash
+
+POKEMON_LIST=("bulbasaur" "ivysaur" "venusaur" "charmander" "charmeleon")
+ERROR_FILE="errors.txt"
+
+> "$ERROR_FILE"  # Clear previous errors
+
+fetch_pokemon() {
+    local POKEMON=$1
+    local RESPONSE_FILE="${POKEMON}.json"
+    ATTEMPT=1
+    SUCCESS=0
+    while [ $ATTEMPT -le 3 ]; do
+        STATUS=$(curl -s -o "$RESPONSE_FILE" -w "%{http_code}" "https://pokeapi.co/api/v2/pokemon/$POKEMON")
+        if [ "$STATUS" -eq 200 ]; then
+            echo "$POKEMON fetched successfully."
+            SUCCESS=1
+            break
+        else
+            echo "Attempt $ATTEMPT for $POKEMON failed (status $STATUS). Retrying..."
+            ATTEMPT=$((ATTEMPT+1))
+            sleep 1
+        fi
+    done
+
+    if [ $SUCCESS -ne 1 ]; then
+        echo "Failed to fetch $POKEMON after 3 attempts." >> "$ERROR_FILE"
+    fi
+}
+
+# Fetch all Pokémon in parallel
+for POKEMON in "${POKEMON_LIST[@]}"; do
+    fetch_pokemon "$POKEMON" &
+done
+
+# Wait for all background processes to finish
+wait
+
+echo "All Pokémon fetch processes completed."
