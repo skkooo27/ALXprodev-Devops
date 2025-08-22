@@ -1,0 +1,71 @@
+#!/bin/bash
+
+OUTPUT_CSV="pokemon_report.csv"
+echo "Name,Height (m),Weight (kg)" > "$OUTPUT_CSV"
+
+total_height=0
+total_weight=0
+count=0
+
+for file in *.json; do
+    NAME=$(jq -r '.name' "$file" | sed 's/\b\(.\)/\u\1/')
+    HEIGHT=$(jq -r '.height' "$file")
+    WEIGHT=$(jq -r '.weight' "$file")
+
+    HEIGHT_M=$(awk "BEGIN {printf \"%.1f\", $HEIGHT/10}")
+    WEIGHT_KG=$(awk "BEGIN {printf \"%.1f\", $WEIGHT/10}")
+
+    echo "$NAME,$HEIGHT_M,$WEIGHT_KG" >> "$OUTPUT_CSV"
+
+    total_height=$(awk "BEGIN {print $total_height+$HEIGHT_M}")
+    total_weight=$(awk "BEGIN {print $total_weight+$WEIGHT_KG}")
+    count=$((count+1))
+done
+
+if [ $count -gt 0 ]; then
+    avg_height=$(awk "BEGIN {printf \"%.2f\", $total_height/$count}")
+    avg_weight=$(awk "BEGIN {printf \"%.2f\", $total_weight/$count}")
+else
+#!/bin/bash
+
+OUTPUT_CSV="pokemon_report.csv"
+echo "Name,Height (m),Weight (kg)" > "$OUTPUT_CSV"
+
+total_height=0
+total_weight=0
+count=0
+
+for file in *.json; do
+    NAME=$(jq -r '.name' "$file" | sed 's/\b\(.\)/\u\1/')
+    HEIGHT=$(jq -r '.height' "$file")
+    WEIGHT=$(jq -r '.weight' "$file")
+
+    HEIGHT_M=$(awk "BEGIN {printf \"%.1f\", $HEIGHT/10}")
+    WEIGHT_KG=$(awk "BEGIN {printf \"%.1f\", $WEIGHT/10}")
+
+    echo "$NAME,$HEIGHT_M,$WEIGHT_KG" >> "$OUTPUT_CSV"
+
+    total_height=$(awk "BEGIN {print $total_height+$HEIGHT_M}")
+    total_weight=$(awk "BEGIN {print $total_weight+$WEIGHT_KG}")
+    count=$((count+1))
+done
+
+if [ $count -gt 0 ]; then
+    avg_height=$(awk "BEGIN {printf \"%.2f\", $total_height/$count}")
+    avg_weight=$(awk "BEGIN {printf \"%.2f\", $total_weight/$count}")
+else
+    avg_height=0
+    avg_weight=0
+fi
+
+echo "CSV Report ge
+    avg_height=0
+    avg_weight=0
+fi
+
+echo "CSV Report generated at: $OUTPUT_CSV"
+echo
+cat "$OUTPUT_CSV"
+echo
+echo "Average Height: $avg_height m"
+echo "Average Weight: $avg_weight kg"
